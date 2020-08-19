@@ -1,0 +1,85 @@
+
+
+initialize(){
+	//Initialize Mutation Rate
+	initializeMutationRate(1e-7);
+
+	
+	//Neutral Mutation m1 with dominance coefficient 0.5, fixed fitness
+	initializeMutationType("m1",0.5,"f",0);
+	initializeMutationType("m2",0.1,"f",0);
+	
+	//Initialize the particular TYPE of chromosomal region of interest (intron exon 		UTI etc
+	initializeGenomicElementType("g1",c(m1,m2),c(1.0,1.0));
+	
+	//initialize the specific region of the genetic element defined above
+	initializeGenomicElement(g1, 0, 99999);
+	
+	//initialize the probability of crossover
+	initializeRecombinationRate(1e-6);
+	m1.convertToSubstitution=F;
+	m2.convertToSubstitution=F;
+	initializeGeneConversion(0.1, 500, 0);
+	//Constants
+	defineConstant("thres",14);
+	defineConstant("selec",0.3);
+	defineConstant("h2", 0.1);
+
+}
+
+
+//Eidos event for generation 1 that will create a new subpopulation of 500 individuals named p1
+
+
+1 {sim.addSubpop("p1", 500);}
+
+
+
+//If an individual has more mutations than the threshold, assign fitness value of 1-selection coefficient
+
+late(){
+	inds = sim.subpopulations.individuals;
+	gen=sim.generation;
+	mut=sim.mutations;
+
+}
+
+
+
+10000{
+	p1.setSubpopulationSize(5000);
+}
+
+//End simulation at generation 20000
+
+11000 {sim.simulationFinished();}
+
+late() {
+// sum the additive effects of QTLs
+ inds = sim.subpopulations.individuals;
+ additive = asFloat(inds.countOfMutationsOfType(m1)- inds.countOfMutationsOfType(m2));
+// add in environmental variance, according to the target heritability
+ V_A = sd(additive)^2;
+ V_E = (V_A - h2 * V_A) / h2; // from h2 == V_A / (V_A + V_E)
+ env = rnorm(size(inds), 0.0, sqrt(V_E));
+// set fitness effects and remember phenotypes
+ inds.tagF = additive + env;
+catn(sim.generation + " : " + paste(inds.tagF));
+catn (sim.generation+ " : " + paste(additive));
+} 
+
+
+
+fitness(NULL){
+	return 1.0- selec* asFloat(individual.tagF>thres);
+}
+
+
+10000{
+	p1.setSubpopulationSize(5000);
+}
+
+//End simulation at generation 20000
+
+11000 {sim.simulationFinished();}
+

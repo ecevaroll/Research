@@ -1,0 +1,41 @@
+initialize(){
+	initializeMutationRate(1e-7);
+	
+	//Neutral Mutation m1 with dominance coefficient 0.5, fixed fitness
+	initializeMutationType("m1",0.5,"f",0.0);
+	
+	//Initialize the particular TYPE of chromosomal region of interest (intron exon UTI etc
+	initializeGenomicElementType("g1",m1,1.0);
+	
+	//initialize the specific region of the genetic element defined above
+	initializeGenomicElement(g1, 0, 99999);
+	
+	//initialize the probability of crossover
+	initializeRecombinationRate(1e-8);
+	m1.convertToSubstitution=F;
+}
+
+//Eidos event for generation 1 that will create a new subpopulation of 500 individuals named p1
+1 {sim.addSubpop("p1", 500);}
+
+
+//End simulation at generation 20000
+
+
+20000 {sim.simulationFinished();}
+
+
+
+late() {
+inds = sim.subpopulations.individuals;
+inds.tag = inds.countOfMutationsOfType(m1);
+gen=sim.generation;
+mut=sim.mutations;
+count=  p1.individuals.countOfMutationsOfType(m1);
+
+
+
+file= paste(sim.generation + " " + paste((inds.tag)));
+
+	writeFile("~/mutationselection.txt", file, append=T);
+}

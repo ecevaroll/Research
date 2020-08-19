@@ -1,0 +1,256 @@
+---
+title: "Simulations"
+author: "Ece Varol"
+date: "12/3/2019"
+output: html_document
+---
+
+
+```{r}
+#Function Definitions
+slim_path <- "/usr/local/bin/slim"
+library(ggplot2)
+
+doOneSLiMRun <- function(seed, script){
+  system2(slim_path, args = c("-s", seed, shQuote(script)), stdout=TRUE, stderr=TRUE)}
+
+
+clean_data <- function(reps, generations, firstGen, script_path){
+  ##clean the data imported from SLIM and return a list of lists splitCounts
+
+  splitCounts <- list()
+  for(rep in 1:reps){ #for loop for repeats of the simulation
+    data <- list()
+    valuesList <- list()
+    output <- doOneSLiMRun(rep, script_path)
+    myPattern <- paste(toString(firstGen), ":", sep=" ")
+    firstLine <- grep(myPattern, output)
+    valuesList <- strsplit(output[firstLine : length(output)] , " : ")
+    gens <- sapply(valuesList, FUN = function(ELEM) ELEM[1])
+    data <- lapply(valuesList, FUN = function(ELEM)as.numeric(strsplit(ELEM[2]," ")[[1]]))
+
+    for (gen in 1: (generations)){
+      num_inds = length(data[[gen]]) - 1
+      if (rep == 1) {
+        splitCounts[[gen]]<- list()
+        ## splitCounts[[gen]][[2]] holds information of liabilities
+        splitCounts[[gen]][[2]] <- list()
+        ## splitCounts[[gen]][[3]] holds information of variances
+        splitCounts[[gen]][[3]] <- list()
+        splitCounts[[gen]][[1]] <- gens[gen]
+      }
+        splitCounts[[gen]][[2]][[rep]] <- data[[gen]][1 : num_inds]
+        splitCounts[[gen]][[3]][[rep]]<- data[[gen]][num_inds + 1]
+    }
+  }
+  return(splitCounts)
+}
+
+
+calculate_diseased_people <- function(reps, generations, firstGen, script_path) {
+  ### Calculate the average number of individuals per generation per rep who have the disease 
+  ### use liability threshold model.
+  ### diseased <- matrix[reps, gens]
+  ### average_diseased<- matrix[1, gens] matrix of average % diseased
+  ### Inputs:
+
+##creating a matrix where number of rows is the generation and number of columns is the replicate. the values will be the % of people who have the disease in a given generation in a given replicate
+diseased <- matrix(rep(NA,(generations) * reps), ncol= (reps), nrow = generations)
+variance <- matrix(rep(NA, (generations) * reps), ncol = (reps), nrow = generations)
+  
+  ##looping over each repetition of the simulation
+  for (rep in (1 : reps)){
+    ##looping over all the generations
+      for (gen in (1 : generations)){
+      x <- as.numeric(unlist(clean[[gen]][[2]][[rep]]))
+      liability <- length(which(x > threshold))
+      diseased[gen, rep] <- liability / length(x)
+      variance[gen, rep] <- clean[[gen]][[3]][[rep]]
+      }
+    }
+  return(diseased)
+}
+
+
+calculate_variance <- function(reps, generations, firstGen, script_path) {
+
+  variance <- matrix(rep(NA, (generations) * reps), ncol = (reps), nrow = generations)
+  ##looping over each repetition of the simulation
+  for (rep in (1 : reps)){
+    ##looping over all the generations
+      for (gen in (1 : generations)){
+      x <- as.numeric(unlist(clean[[gen]][[2]][[rep]]))
+      variance[gen, rep] <- clean[[gen]][[3]][[rep]]
+      }
+    }
+  return(variance)
+  
+}
+
+
+plot <- function(reps, generations, firstGen, title, script_path, data, ylab){
+
+  df <- data.frame(generation = integer(), diseased_percentage = numeric(), stdev = numeric())
+  generation <- firstGen:(lastGen - 1)
+  diseased_percentage <- apply(data[ ], 1, mean)
+  stdev <- apply(diseased[ ], 1, sd)
+  df = rbind(df, data.frame(generation, diseased_percentage, stdev))
+
+  print(ggplot (df, aes(x = generation, y = diseased_percentage)) + geom_point(size = 0.1) + 
+         ggtitle(title) + labs(x ="generation", y=ylab))
+  }
+
+
+```
+
+
+
+```{r}
+#10000 ##the generation the population expands at
+
+
+#Constants:
+reps <- 15 ##how many times will the code run
+firstGen <- 8000 ##first generation to start the analysis
+script_path <- "/Users/ecevarol/Desktop/Research/SLIM/PopExpEnvGenVar.txt"
+lastGen <- 11000 ##last generation of the simulation
+threshold <-7 ##threshold mutation number (above threshold has disease)
+generations <- lastGen-firstGen ##how many generations are in the simulation
+title <- "Population Expansion without Beneficial Mutation"
+
+clean <- clean_data(reps, generations, firstGen, script_path)
+diseased<- calculate_diseased_people(reps, generations, firstGen, script_path)
+variance<- calculate_variance(reps, generations, firstGen, script_path) 
+ylab = "disease prevalance"
+plot(reps, generations, firstGen, title, script_path, diseased, ylab)
+ylab = "variance"
+plot(reps, generations, firstGen, title, script_path, variance, ylab)
+
+
+```
+
+
+
+
+
+```{r}
+#10000 ##the generation the population expands at
+## rho = 0.9
+
+#Constants:
+reps <- 5 ##how many times will the code run
+firstGen <- 8000 ##first generation to start the analysis
+script_path <- "/Users/ecevarol/Desktop/Research/SLIM/PopExpEnvBen(rho_0.9).txt"
+lastGen <- 11000 ##last generation of the simulation
+threshold <-7 ##threshold mutation number (above threshold has disease)
+generations <- lastGen-firstGen ##how many generations are in the simulation
+title <- "Population Expansion with Beneficial Mutation(rho = 0.9)"
+
+clean <- clean_data(reps, generations, firstGen, script_path)
+diseased<- calculate_diseased_people(reps, generations, firstGen, script_path)
+variance<- calculate_variance(reps, generations, firstGen, script_path) 
+ylab = "disease prevalance"
+plot(reps, generations, firstGen, title, script_path, diseased, ylab)
+ylab = "variance"
+plot(reps, generations, firstGen, title, script_path, variance, ylab)
+
+
+```
+
+
+```{r}
+#10000 ##the generation the population expands at
+## rho = 0.7
+
+#Constants:
+reps <- 5 ##how many times will the code run
+firstGen <- 8000 ##first generation to start the analysis
+script_path <- "/Users/ecevarol/Desktop/Research/SLIM/PopExpEnvBen(rho_0.7).txt"
+lastGen <- 11000 ##last generation of the simulation
+threshold <-7 ##threshold mutation number (above threshold has disease)
+generations <- lastGen-firstGen ##how many generations are in the simulation
+title <- "Population Expansion with Beneficial Mutation"
+
+#Call the plot for the file
+
+clean <- clean_data(reps, generations, firstGen, script_path)
+diseased<- calculate_diseased_people(reps, generations, firstGen, script_path)
+variance<- calculate_variance(reps, generations, firstGen, script_path) 
+ylab = "disease prevalance"
+plot(reps, generations, firstGen, title, script_path, diseased, ylab)
+ylab = "variance"
+plot(reps, generations, firstGen, title, script_path, variance, ylab)
+
+
+```
+
+```{r}
+#10,000- the generation the population expands at
+# rho = 0.5
+
+#Constants:
+reps <- 10 ##how many times will the code run
+firstGen <- 8000 ##first generation to start the analysis
+script_path <- "/Users/ecevarol/Desktop/Research/SLIM/PopExpEnvBen(rho_0.5).txt"
+lastGen <- 11000 ##last generation of the simulation
+threshold <-7 ##threshold mutation number (above threshold has disease)
+generations <- lastGen-firstGen ##how many generations are in the simulation
+title <- "Population Expansion with Beneficial Mutation"
+
+#Call the plot for the file
+
+clean <- clean_data(reps, generations, firstGen, script_path)
+diseased<- calculate_diseased_people(reps, generations, firstGen, script_path)
+variance<- calculate_variance(reps, generations, firstGen, script_path) 
+ylab = "disease prevalance"
+plot(reps, generations, firstGen, title, script_path, diseased, ylab)
+ylab = "variance"
+plot(reps, generations, firstGen, title, script_path, variance, ylab)
+
+
+
+```
+
+
+
+```{r}
+#10,000- the generation the population expands at
+# rho = 0.9
+
+#Constants:
+reps <- 15 ##how many times will the code run
+firstGen <- 8000 ##first generation to start the analysis
+script_path <- "/Users/ecevarol/Desktop/Research/SLIM/predetermined_VE.txt"
+lastGen <- 11000 ##last generation of the simulation
+threshold <-7 ##threshold mutation number (above threshold has disease)
+generations <- lastGen-firstGen ##how many generations are in the simulation
+title <- "Population Expansion with Beneficial Mutation using V_E"
+
+
+clean <- clean_data(reps, generations, firstGen, script_path)
+diseased<- calculate_diseased_people(reps, generations, firstGen, script_path)
+variance<- calculate_variance(reps, generations, firstGen, script_path) 
+ylab = "disease prevalance"
+plot(reps, generations, firstGen, title, script_path, diseased, ylab)
+ylab = "variance"
+plot(reps, generations, firstGen, title, script_path, variance, ylab)
+
+
+```
+
+
+
+MATRIX OUTPUT
+```{r}
+
+script_path <- "/Users/ecevarol/Desktop/Research/SLIM/Matrix.txt"
+rep<- 1
+
+output <- doOneSLiMRun(rep, script_path)
+
+read.matrix(output)
+
+```
+
+
+

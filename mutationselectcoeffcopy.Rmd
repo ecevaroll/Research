@@ -1,0 +1,382 @@
+---
+title: "Fitness depending on Selection Coeff 0.3"
+author: "Ece Varol"
+date: "7/2/2019"
+output: html_document
+---
+
+
+
+
+```{r}
+#Fitness Null
+#Selection Coefficient=0.3
+#Threshold= 4
+#Recombination Rate 10^-8
+rm(list=ls())
+work_dir <- "~/Desktop/Research"
+setwd(work_dir)
+
+output<-read.delim("mutation5.txt", sep=" ", header=FALSE)
+gen<- matrix(rep(0,40000),nrow=20000, ncol=2)
+
+for (i in 1:20000) {
+  gen[i,1]<-output[i,1]
+  sum<-rowSums(output[i,2:500])
+  gen[i,2]<- sum/500
+}
+
+thres=4
+percent<- matrix(rep(0,20000*500),nrow=20000, ncol=500)
+
+#People with >4 mutations=1
+#People with <4 mutations= 0
+for (i in 1:20000){
+  percent[i,1]<-output[i,1]
+  
+  for(t in 2:500){
+   if(output[i,t] >thres)
+    percent[i,t]<-1
+  else
+    percent[i,t]<-0
+  }
+}
+
+#Sum up the number of individuals that have more than threshold value of mutations per generation
+percentnew<- matrix(rep(0,40000),nrow=20000, ncol=2)
+ for(i in 1:20000){
+   percentnew[i,1]<- percent[i,1]
+   sums<-sum(percent[i,2:500])
+   percentnew[i,2]<-sums
+ }
+
+
+#Plot Number of Mutations per Individual with Selection Coef=0.001
+plot(gen[,1],gen[,2],xlab="Generation",ylab="Number of Mutations per Individual", type="l", xlim=c(0,20000), ylim=c(0,4))
+
+#Plot the number of individuals that have mutations above the threshold vs.generation
+plot(percentnew[,1],percentnew[,2]/500, type="l", xlab="Generation", ylab="% of Individuals with >4 Mutations", main="Disease Prevalance", col=c("red"), xlim=c(0,20000))
+
+```
+
+Show in New WindowClear OutputExpand/Collapse Output
+Error: '\D' is an unrecognized escape in character string starting ""C:\D"
+Modify Chunk OptionsRun All Chunks AboveRun Current Chunk
+Show in New WindowClear OutputExpand/Collapse Output
+
+The working directory was changed to /Users/ecevarol/Desktop/Research inside a notebook chunk. The working directory will be reset when the chunk is finished running. Use the knitr root.dir option in the setup chunk to change the working directory for notebook chunks.
+R Console
+
+
+Control Group
+```{r}
+rm(list=ls())
+#Fitness Null
+#Selection Coefficient=0.3
+#Threshold= 7
+thres=7
+work_dir <- "~/Desktop/Research"
+setwd(work_dir)
+
+output<-read.delim("mutation7.txt", sep=" ", header=FALSE)
+gen<- matrix(rep(0,40000),nrow=20000, ncol=2)
+
+for (i in 1:20000) {
+  gen[i,1]<-output[i,1]
+  sum<-rowSums(output[i,2:500])
+  gen[i,2]<- sum/500
+}
+
+
+percent<- matrix(rep(0,20000*500),nrow=20000, ncol=500)
+
+#People with >4 mutations=1
+#People with <4 mutations= 0
+for (i in 1:20000){
+  percent[i,1]<-output[i,1]
+  
+  for(t in 2:500){
+   if(output[i,t] >thres)
+    percent[i,t]<-1
+  else
+    percent[i,t]<-0
+  }
+}
+
+#Sum up the number of individuals that have more than threshold value of mutations per generation
+percentnew<- matrix(rep(0,40000),nrow=20000, ncol=2)
+ for(i in 1:20000){
+   percentnew[i,1]<- percent[i,1]
+   sums<-sum(percent[i,2:500])
+   percentnew[i,2]<-sums
+ }
+
+
+#Plot Number of Mutations per Individual with Selection Coef=0.001
+plot(gen[,1],gen[,2],xlab="Generation",ylab="Number of Mutations per Individual", type="l", xlim=c(0,20000), ylim=c(0,7))
+
+#Plot the number of individuals that have mutations above the threshold vs.generation
+plot(percentnew[,1],percentnew[,2]/500, type="l", xlab="Generation", ylab="% of Individuals with >7 Mutations", main="Disease Prevalance", col=c("red"), xlim=c(0,20000),ylim=c(0,1))
+```
+
+
+```{r}
+rm(list=ls())
+#Fitness Null
+#Selection Coefficient=0.2
+#Threshold= 7
+#Recombination Rate 10^-8
+thres=7
+work_dir <- "~/Desktop/Research"
+setwd(work_dir)
+
+output<-read.delim("mutation8.txt", sep=" ", header=FALSE)
+gen<- matrix(rep(0,40000),nrow=20000, ncol=2)
+
+for (i in 1:20000) {
+  gen[i,1]<-output[i,1]
+  sum<-rowSums(output[i,2:500])
+  gen[i,2]<- sum/500
+}
+
+
+percent<- matrix(rep(0,20000*500),nrow=20000, ncol=500)
+
+#People with >4 mutations=1
+#People with <4 mutations= 0
+for (i in 1:20000){
+  percent[i,1]<-output[i,1]
+  
+  for(t in 2:500){
+   if(output[i,t] >thres)
+    percent[i,t]<-1
+  else
+    percent[i,t]<-0
+  }
+}
+
+#Sum up the number of individuals that have more than threshold value of mutations per generation
+percentnew<- matrix(rep(0,40000),nrow=20000, ncol=2)
+ for(i in 1:20000){
+   percentnew[i,1]<- percent[i,1]
+   sums<-sum(percent[i,2:500])
+   percentnew[i,2]<-sums
+ }
+
+
+#Plot Number of Mutations per Individual with Selection Coef=0.001
+plot(gen[,1],gen[,2],xlab="Generation",ylab="Number of Mutations per Individual", type="l", xlim=c(0,20000), ylim=c(0,thres))
+
+#Plot the number of individuals that have mutations above the threshold vs.generation
+plot(percentnew[,1],percentnew[,2]/500, type="l", xlab="Generation", ylab="% of Individuals with >7 Mutations", main="Disease Prevalance", col=c("red"), xlim=c(0,20000),ylim=c(0,1))
+```
+
+```{r}
+rm(list=ls())
+#Fitness Null
+#Selection Coefficient=0.2
+#Threshold= 4
+#Recombination Rate 10^-8
+thres=4
+work_dir <- "~/Desktop/Research"
+setwd(work_dir)
+
+output<-read.delim("mutation9.txt", sep=" ", header=FALSE)
+gen<- matrix(rep(0,40000),nrow=20000, ncol=2)
+
+for (i in 1:20000) {
+  gen[i,1]<-output[i,1]
+  sum<-rowSums(output[i,2:500])
+  gen[i,2]<- sum/500
+}
+
+
+percent<- matrix(rep(0,20000*500),nrow=20000, ncol=500)
+
+#People with >4 mutations=1
+#People with <4 mutations= 0
+for (i in 1:20000){
+  percent[i,1]<-output[i,1]
+  
+  for(t in 2:500){
+   if(output[i,t] >thres)
+    percent[i,t]<-1
+  else
+    percent[i,t]<-0
+  }
+}
+
+#Sum up the number of individuals that have more than threshold value of mutations per generation
+percentnew<- matrix(rep(0,40000),nrow=20000, ncol=2)
+ for(i in 1:20000){
+   percentnew[i,1]<- percent[i,1]
+   sums<-sum(percent[i,2:500])
+   percentnew[i,2]<-sums
+ }
+
+
+#Plot Number of Mutations per Individual with Selection Coef=0.001
+plot(gen[,1],gen[,2],xlab="Generation",ylab="Number of Mutations per Individual", type="l", xlim=c(0,20000), ylim=c(0,thres))
+
+#Plot the number of individuals that have mutations above the threshold vs.generation
+plot(percentnew[,1],percentnew[,2]/500, type="l", xlab="Generation", ylab="% of Individuals with >4 Mutations", main="Disease Prevalance", col=c("red"), xlim=c(0,20000),ylim=c(0,1))
+```
+```{r}
+rm(list=ls())
+#Fitness Null
+#Selection Coefficient=0.3
+#Threshold= 9
+#Recombination Rate 10^-8
+thres=9
+work_dir <- "~/Desktop/Research"
+setwd(work_dir)
+
+output<-read.delim("mutation10.txt", sep=" ", header=FALSE)
+gen<- matrix(rep(0,40000),nrow=20000, ncol=2)
+
+for (i in 1:20000) {
+  gen[i,1]<-output[i,1]
+  sum<-rowSums(output[i,2:500])
+  gen[i,2]<- sum/500
+}
+
+
+percent<- matrix(rep(0,20000*500),nrow=20000, ncol=500)
+
+#People with >4 mutations=1
+#People with <4 mutations= 0
+for (i in 1:20000){
+  percent[i,1]<-output[i,1]
+  
+  for(t in 2:500){
+   if(output[i,t] >thres)
+    percent[i,t]<-1
+  else
+    percent[i,t]<-0
+  }
+}
+
+#Sum up the number of individuals that have more than threshold value of mutations per generation
+percentnew<- matrix(rep(0,40000),nrow=20000, ncol=2)
+ for(i in 1:20000){
+   percentnew[i,1]<- percent[i,1]
+   sums<-sum(percent[i,2:500])
+   percentnew[i,2]<-sums
+ }
+
+
+#Plot Number of Mutations per Individual with Selection Coef=0.001
+plot(gen[,1],gen[,2],xlab="Generation",ylab="Number of Mutations per Individual", type="l", xlim=c(0,20000), ylim=c(0,thres))
+
+#Plot the number of individuals that have mutations above the threshold vs.generation
+plot(percentnew[,1],percentnew[,2]/500, type="l", xlab="Generation", ylab="% of Individuals with >4 Mutations", main="Disease Prevalance", col=c("red"), xlim=c(0,20000),ylim=c(0,1))
+```
+
+Decreasing Recombination Rate
+```{r}
+rm(list=ls())
+#Fitness Null
+#Selection Coefficient=0.3
+#Threshold= 7
+#Recombination Rate 10^-9
+thres=7
+work_dir <- "~/Desktop/Research"
+setwd(work_dir)
+
+output<-read.delim("mutation12.txt", sep=" ", header=FALSE)
+gen<- matrix(rep(0,40000),nrow=20000, ncol=2)
+
+for (i in 1:20000) {
+  gen[i,1]<-output[i,1]
+  sum<-rowSums(output[i,2:500])
+  gen[i,2]<- sum/500
+}
+
+
+percent<- matrix(rep(0,20000*500),nrow=20000, ncol=500)
+
+#People with >4 mutations=1
+#People with <4 mutations= 0
+for (i in 1:20000){
+  percent[i,1]<-output[i,1]
+  
+  for(t in 2:500){
+   if(output[i,t] >thres)
+    percent[i,t]<-1
+  else
+    percent[i,t]<-0
+  }
+}
+
+#Sum up the number of individuals that have more than threshold value of mutations per generation
+percentnew<- matrix(rep(0,40000),nrow=20000, ncol=2)
+ for(i in 1:20000){
+   percentnew[i,1]<- percent[i,1]
+   sums<-sum(percent[i,2:500])
+   percentnew[i,2]<-sums
+ }
+
+
+#Plot Number of Mutations per Individual with Selection Coef=0.001
+plot(gen[,1],gen[,2],xlab="Generation",ylab="Number of Mutations per Individual", type="l", xlim=c(0,20000), ylim=c(0,10))
+
+#Plot the number of individuals that have mutations above the threshold vs.generation
+plot(percentnew[,1],percentnew[,2]/500, type="l", xlab="Generation", ylab="% of Individuals with >7 Mutations", main="Disease Prevalance", col=c("red"), xlim=c(0,20000),ylim=c(0,1))
+```
+
+
+
+Increasing Recombination Rate
+```{r}
+rm(list=ls())
+#Fitness Null
+#Selection Coefficient=0.3
+#Threshold= 9
+#Recombination Rate 10^-7
+thres=7
+work_dir <- "~/Desktop/Research"
+setwd(work_dir)
+
+output<-read.delim("mutation13.txt", sep=" ", header=FALSE)
+gen<- matrix(rep(0,40000),nrow=20000, ncol=2)
+
+for (i in 1:20000) {
+  gen[i,1]<-output[i,1]
+  sum<-rowSums(output[i,2:500])
+  gen[i,2]<- sum/500
+}
+
+
+percent<- matrix(rep(0,20000*500),nrow=20000, ncol=500)
+
+#People with >4 mutations=1
+#People with <4 mutations= 0
+for (i in 1:20000){
+  percent[i,1]<-output[i,1]
+  
+  for(t in 2:500){
+   if(output[i,t] >thres)
+    percent[i,t]<-1
+  else
+    percent[i,t]<-0
+  }
+}
+
+#Sum up the number of individuals that have more than threshold value of mutations per generation
+percentnew<- matrix(rep(0,40000),nrow=20000, ncol=2)
+ for(i in 1:20000){
+   percentnew[i,1]<- percent[i,1]
+   sums<-sum(percent[i,2:500])
+   percentnew[i,2]<-sums
+ }
+
+
+#Plot Number of Mutations per Individual with Selection Coef=0.001
+plot(gen[,1],gen[,2],xlab="Generation",ylab="Number of Mutations per Individual", type="l", xlim=c(0,20000), ylim=c(0,thres))
+
+#Plot the number of individuals that have mutations above the threshold vs.generation
+plot(percentnew[,1],percentnew[,2]/500, type="l", xlab="Generation", ylab="% of Individuals with >7 Mutations", main="Disease Prevalance", col=c("red"), xlim=c(0,20000),ylim=c(0,1))
+```
+
+
+More fluctuations compared to the control group when you increase the recombination rate. 
