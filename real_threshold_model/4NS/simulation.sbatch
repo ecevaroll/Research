@@ -16,11 +16,11 @@ module load midway2; module load SLiM/3.0
 
 for rep in {1..40}
 do
-slim -d rho=0.497 -d "prev_name='prev_01.txt'"  -d "var_name='var_01.txt'" sim.txt
+slim -d rho=0.497 -d "prev_name='prev_01.txt'"  -d "var_name='var_01.txt'" simulation.slim
 echo "Finished sim01 at `date`."
-slim -d rho=0.269 -d "prev_name='prev_1.txt'"  -d "var_name='var_1.txt'" sim.txt
+slim -d rho=0.269 -d "prev_name='prev_1.txt'"  -d "var_name='var_1.txt'" simulation.slim
 echo "Finished sim1 at `date`."
-slim -d rho=0.007 -d "prev_name='prev_5.txt'"  -d "var_name='var_5.txt'" sim.txt
+slim -d rho=0.007 -d "prev_name='prev_5.txt'"  -d "var_name='var_5.txt'" simulation.slim
 echo "Finished sim5 at `date`."
 echo "Finished $rep"
 done
