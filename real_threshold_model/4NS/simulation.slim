@@ -13,7 +13,7 @@ initialize(){
 	initializeGenomicElement(g1, 0, L);
 	
 	//initialize the probability of crossover
-	initializeRecombinationRate(1e-8);
+	initializeRecombinationRate(1e-4);
 	m1.convertToSubstitution=T;
 	m2.convertToSubstitution=T;
 	defineConstant("thres",(rho* 2*L)); //liability threshold
@@ -85,8 +85,7 @@ fitness(NULL){
 	return 1.0 - selec * asFloat(individual.tagF>thres);
 }
 
-//End simulation at generation 20000
-
+//End simulation at generation 40000
 40000 {
 	sim.simulationFinished();
 }
