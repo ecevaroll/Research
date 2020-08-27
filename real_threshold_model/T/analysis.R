@@ -1,5 +1,6 @@
 
 library(ggplot2)
+library(reshape2)
 
 calc_var <- function(output) {
     variance <- list()
@@ -65,15 +66,17 @@ calc_prev <- function(output) {
 
 my_plotter <- function(firstGen, lastGen, m1, m2, m3, m4, m5, title, y_axis) {
 
-gens <- seq(firstGen, lastGen)
-df <- data.frame(x = gens, y = as.numeric(unlist(m1)))
-colors <- c("Threshold = 1" = "red", "Threshold = 5" = "blue", "Threshold = 10" = "green",  "Threshold = 30" = "purple", "Threshold = 100" = "orange" )
-print(ggplot (df, aes(gens, as.numeric(m1)))) +
-  geom_line(size = 0.3, aes(color= "Threshold = 1")) + ggtitle(title) + geom_line(aes(y=as.numeric(m2), color="Threshold = 5"), size = 0.3) + geom_line(aes(y=as.numeric(m3), color="Threshold = 10"), size = 0.3) +
-  geom_line(aes(y=as.numeric(m4), color="Threshold = 30"), size = 0.3) +
-  geom_line(aes(y=as.numeric(m5), color="Threshold = 100"), size = 0.3) +
-  labs(x ="generation", y= y_axis, color = "Threshold values") + scale_color_manual(values = colors)  + 
-  xlim(firstGen, lastGen) + geom_vline(xintercept = 20000, color="black", size=0.1)
+generations <- seq(firstGen, lastGen)
+T1 = as.numeric(m1)
+T5 = as.numeric(m2)
+T10 = as.numeric(m3)
+T30 = as.numeric(m4)
+T100 = as.numeric(m5)
+df <- data.frame(generations, T1, T5, T10, T30, T100)
+mdf <- melt(df,id.vars="generations")
+ggplot (mdf, aes(x= generations, y = value, colour = variable))+
+  geom_line() +
+  xlim(firstGen, lastGen) + geom_vline(xintercept = 20000, color="black", size=0.1) + ylab(y_axis) + ggtitle(title)
 }
 
 fd3 = "var_t1.txt"

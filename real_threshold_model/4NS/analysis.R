@@ -1,5 +1,6 @@
 
 library(ggplot2)
+library(reshape2)
 
 calc_var <- function(output) {
     variance <- list()
@@ -65,12 +66,14 @@ calc_prev <- function(output) {
 
 my_plotter <- function(firstGen, lastGen, m1, m2, m3, title, y_axis) {
 
-gens <- seq(firstGen, lastGen)
-df <- data.frame(x = gens, y = as.numeric(unlist(m1)))
-colors <- c("4NS = 1" = "red", "4NS = 0.1" = "blue", "4NS = 5" = "green")
-print(ggplot (df, aes(gens, as.numeric(m1)))) +
-  geom_line(size = 0.3, aes(color= "4NS = 1")) + ggtitle(title) + geom_line(aes(y=as.numeric(m2), color="4NS = 0.1" ), size = 0.3) + geom_line(aes(y=as.numeric(m3), color="4NS = 5"), size = 0.3) +
-  labs(x ="generation", y= y_axis, color = "4NS values") + scale_color_manual(values = colors)  + 
+generations <- seq(firstGen, lastGen)
+val_1 = as.numeric(m1)
+val_01 = as.numeric(m2)
+val_5 = as.numeric(m3)
+df <- data.frame(generations, val_1, val_01, val_5)
+mdf <- melt(df,id.vars="generations")
+ggplot (mdf, aes(x= generations, y = value, colour = variable))+
+  geom_line() +
   xlim(firstGen, lastGen) + geom_vline(xintercept = 20000, color="black", size=0.1)
 }
 

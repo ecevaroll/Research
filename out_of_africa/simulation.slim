@@ -21,7 +21,6 @@ initialize(){
 	defineConstant("h2", 0.5); //heritability
 	defineConstant("init_pop", 500); 
 	defineConstant("mu", (1e-7)); //mutations per base position per generation
-	defineConstant("gamma", log(rho / (1-rho)));
 	defineConstant("s", gamma/ (4 * init_pop));
 	defineConstant("envVar", sqrt(2 * L * 1e-7/s * (exp(gamma)- 1)/(exp(gamma)+1)*(1-h2)/h2));
 	

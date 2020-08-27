@@ -20,8 +20,9 @@ initialize(){
 	defineConstant("h2", 0.5); //heritability
 	defineConstant("init_pop", 500);//initial population size
 	defineConstant("mu", (1e-7)); //mutations per base position per generation
+	defineConstant("gamma", log(rho / (1-rho)));
 	defineConstant("s", gamma/ (4 * init_pop));
-	defineConstant("envVar", sqrt(2 * L * mu/s * (exp(gamma)- 1)/(exp(gamma)+1)*(1-h2)/h2));
+	//defineConstant("envVar", sqrt(2 * L * mu/s * (exp(gamma)- 1)/(exp(gamma)+1)*(1-h2)/h2));
 	defineConstant("stdev", sqrt(4* L * mu/s * (exp(gamma)-1)/(exp(gamma)+1)));
 	
 }
