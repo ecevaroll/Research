@@ -12,6 +12,8 @@ echo "Working directory is `pwd`"
 
 module load R
 
+rm *.pdf
+
 R CMD BATCH --save --no-restore analysis.R
 
 echo "Finished analysis at `date`."

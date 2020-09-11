@@ -9,21 +9,20 @@ initialize(){
 	initializeGenomicElementType("g1",c(m1,m2),c((1-rho),rho));
 	
 	//initialize the specific region of the genetic element defined above
-	defineConstant("L", 99999); //number of sites
+	defineConstant("L", 1e4); //number of sites
 	initializeGenomicElement(g1, 0, L);
 	
 	//initialize the probability of crossover
-	initializeRecombinationRate(1e-4);
+	initializeRecombinationRate(1e-5);
 	m1.convertToSubstitution=T;
 	m2.convertToSubstitution=T;
-	defineConstant("thres",(rho* 2*L)); //liability threshold
 	defineConstant("selec",0.3); //fitness cost of disease
 	defineConstant("h2", 0.5); //heritability
 	defineConstant("init_pop", 500);//initial population size
 	defineConstant("mu", (1e-7)); //mutations per base position per generation
-	defineConstant("gamma", log((1-rho)/ rho));
+	defineConstant("gamma", log(rho / (1-rho)));
 	defineConstant("s", gamma/ (4 * init_pop));
-	defineConstant("envVar", sqrt(2 * L * mu/s * (exp(gamma)- 1)/(exp(gamma)+1)*(1-h2)/h2));
+	//defineConstant("envVar", sqrt(2 * L * mu/s * (exp(gamma)- 1)/(exp(gamma)+1)*(1-h2)/h2));
 	defineConstant("stdev", sqrt(4* L * mu/s * (exp(gamma)-1)/(exp(gamma)+1)));
 	
 }
@@ -34,12 +33,12 @@ initialize(){
 
 1 {
 	sim.addSubpop("p1", init_pop);
-	file = paste(rho + " " + getSeed());
+	file = paste(thres + " " + getSeed());
 	writeFile("seed.txt", file, append=T);
 }
 
 
-20000 {
+30000 {
 	p1.setSubpopulationSize(5000);
 }
 
@@ -53,7 +52,11 @@ initialize(){
           sum(sim.substitutions.mutationType == m1));
         negGenLi = inds.countOfMutationsOfType(m2) +	       
           sum(sim.substitutions.mutationType == m2);
-	genLi =  (thres- (6*stdev)) + (posGenLi - negGenLi);
+	if (thres < 30) {
+		genLi = (posGenLi - negGenLi);
+	} else {
+		genLi = (thres-13) + (posGenLi - negGenLi);
+	}
 	
 // add in environmental variance, according to the target heritability
 	env = rnorm(size(inds), 0.0, envVar);
@@ -66,10 +69,10 @@ initialize(){
         prev = sum(inds.tagF > thres)/size(inds);
         risk = (sum(inds.tagF > (thres - 1))/size(inds)) - prev ;
         
-    prevLine = paste(sim.generation + " " + prev + " " + risk);
+    prevLine = paste(sim.generation + " " + prev + " " + risk + " " + mean(inds.tagF) + " ");
 	writeFile(prev_name, prevLine, append=T);
 	
-	varLine = paste(sim.generation + " " + V_A + " " + (V_A/(V_A + V_E)));
+	varLine = paste(sim.generation + " " + V_A + " " + (V_A/(V_A + V_E)) + " " + V_E);
 	writeFile(var_name, varLine, append=T);
 	
 }
@@ -85,7 +88,8 @@ fitness(NULL){
 	return 1.0 - selec * asFloat(individual.tagF>thres);
 }
 
-//End simulation at generation 40000
+//End simulation at generation 20000
+
 40000 {
 	sim.simulationFinished();
 }

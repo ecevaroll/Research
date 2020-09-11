@@ -9,20 +9,21 @@ initialize(){
 	initializeGenomicElementType("g1",c(m1,m2),c((1-rho),rho));
 	
 	//initialize the specific region of the genetic element defined above
-	defineConstant("L", 1e4); //number of sites
+	defineConstant("L", 99999); //number of sites
 	initializeGenomicElement(g1, 0, L);
 	
 	//initialize the probability of crossover
-	initializeRecombinationRate(1e-5);
+	initializeRecombinationRate(1e-4);
 	m1.convertToSubstitution=T;
 	m2.convertToSubstitution=T;
+	defineConstant("thres",(rho* 2*L)); //liability threshold
 	defineConstant("selec",0.3); //fitness cost of disease
 	defineConstant("h2", 0.5); //heritability
 	defineConstant("init_pop", 500);//initial population size
 	defineConstant("mu", (1e-7)); //mutations per base position per generation
-	defineConstant("gamma", log(rho / (1-rho)));
+	defineConstant("gamma", log((1-rho)/ rho));
 	defineConstant("s", gamma/ (4 * init_pop));
-	//defineConstant("envVar", sqrt(2 * L * mu/s * (exp(gamma)- 1)/(exp(gamma)+1)*(1-h2)/h2));
+	defineConstant("envVar", sqrt(2 * L * mu/s * (exp(gamma)- 1)/(exp(gamma)+1)*(1-h2)/h2) * 1/2); //think there is a factor of two error
 	defineConstant("stdev", sqrt(4* L * mu/s * (exp(gamma)-1)/(exp(gamma)+1)));
 	
 }
@@ -52,7 +53,7 @@ initialize(){
           sum(sim.substitutions.mutationType == m1));
         negGenLi = inds.countOfMutationsOfType(m2) +	       
           sum(sim.substitutions.mutationType == m2);
-	genLi = (posGenLi - negGenLi);
+	genLi =  (thres- (4*stdev)) + (posGenLi - negGenLi);
 	
 // add in environmental variance, according to the target heritability
 	env = rnorm(size(inds), 0.0, envVar);
@@ -84,8 +85,7 @@ fitness(NULL){
 	return 1.0 - selec * asFloat(individual.tagF>thres);
 }
 
-//End simulation at generation 20000
-
+//End simulation at generation 40000
 40000 {
 	sim.simulationFinished();
 }

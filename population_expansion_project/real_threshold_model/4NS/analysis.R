@@ -74,8 +74,9 @@ df <- data.frame(generations, val_1, val_01, val_5)
 mdf <- melt(df,id.vars="generations")
 ggplot (mdf, aes(x= generations, y = value, colour = variable))+
   geom_line() +
-  xlim(firstGen, lastGen) + geom_vline(xintercept = 20000, color="black", size=0.1)
+  xlim(firstGen, lastGen) + geom_vline(xintercept = 20000, color="black", size=0.1) + ylab(y_axis) + ggtitle(title)
 }
+
 
 fd3 = "var_1.txt"
 output1 = read.table(fd3)
