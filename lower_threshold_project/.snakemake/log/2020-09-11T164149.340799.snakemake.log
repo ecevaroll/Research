@@ -1,0 +1,4 @@
+Building DAG of jobs...
+MissingInputException in line 2 of /Users/ecevarol/Desktop/Research/lower_threshold_project/Snakefile:
+Missing input files for rule get_env_var:
+-d L=10e4 -d thres=1

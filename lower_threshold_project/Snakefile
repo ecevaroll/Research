@@ -1,0 +1,22 @@
+import pandas as pd
+
+rule get_data:
+	input:
+		"simulation.slim"
+	output:
+		"env_var.txt"
+	shell:
+		"slim -d L=10e4 -d thres=1 {input}"
+
+rule calc_vals:
+	input:
+		"env_var.txt"
+	output:
+		"data.txt"
+	run:
+		data = pd.read_csv(str(input), sep=" ", header=None)
+
+		env_var = data[1,].iloc[,20000:40000].mean()
+		liability = data[2,].iloc[,5000:10000].mean()
+		with open(output[0], "w") as out:
+			out.write("{}  {}".format(str(env_var), str(liability)))
