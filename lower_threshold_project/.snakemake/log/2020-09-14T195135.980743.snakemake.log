@@ -1,0 +1,15 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	get_data
+	1
+
+[Mon Sep 14 19:51:36 2020]
+rule get_data:
+    input: simulation.slim
+    output: env_var.txt
+    jobid: 0
+

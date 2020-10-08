@@ -1,0 +1,4 @@
+Building DAG of jobs...
+WildcardError in line 15 of /Users/ecevarol/Desktop/Research/lower_threshold_project/Snakefile:
+Wildcards in input files cannot be determined from output files:
+'L'

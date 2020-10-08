@@ -1,0 +1,28 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	get_data
+	1
+
+[Thu Oct  1 21:02:09 2020]
+rule get_data:
+    input: simulation.slim
+    output: 10000_1_test.txt
+    jobid: 0
+    wildcards: L=10000, T=1
+
+Terminating processes on user request, this might take some time.
+[Thu Oct  1 21:02:28 2020]
+Error in rule get_data:
+    jobid: 0
+    output: 10000_1_test.txt
+    shell:
+        slim -d envVar=0.05 -d adjustment=0 -d L=10000 -d thres=1 simulation.slim
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job get_data since they might be corrupted:
+10000_1_test.txt
+Complete log: /Users/ecevarol/Desktop/Research/lower_threshold_project/.snakemake/log/2020-10-01T210209.390458.snakemake.log

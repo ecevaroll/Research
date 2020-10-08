@@ -1,0 +1,47 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	calc_vals
+	1	get_data
+	1	run_sims
+	3
+
+[Thu Sep 24 12:31:32 2020]
+rule get_data:
+    input: simulation.slim
+    output: 10000_1_test.txt
+    jobid: 2
+
+[Thu Sep 24 12:34:44 2020]
+Finished job 2.
+1 of 3 steps (33%) done
+
+[Thu Sep 24 12:34:44 2020]
+rule calc_vals:
+    input: 10000_1_test.txt
+    output: data.txt
+    jobid: 1
+
+[Thu Sep 24 12:34:45 2020]
+Finished job 1.
+2 of 3 steps (67%) done
+
+[Thu Sep 24 12:34:45 2020]
+rule run_sims:
+    input: data.txt, simulation.slim
+    output: 10000_1.txt
+    jobid: 0
+
+Waiting at most 10 seconds for missing files.
+MissingOutputException in line 24 of /Users/ecevarol/Desktop/Research/lower_threshold_project/Snakefile:
+Job completed successfully, but some output files are missing. Missing files after 10 seconds:
+10000_1.txt
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+  File "/Users/ecevarol/opt/miniconda3/envs/snakemake/lib/python3.8/site-packages/snakemake/executors/__init__.py", line 544, in handle_job_success
+  File "/Users/ecevarol/opt/miniconda3/envs/snakemake/lib/python3.8/site-packages/snakemake/executors/__init__.py", line 225, in handle_job_success
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /Users/ecevarol/Desktop/Research/lower_threshold_project/.snakemake/log/2020-09-24T123131.086910.snakemake.log

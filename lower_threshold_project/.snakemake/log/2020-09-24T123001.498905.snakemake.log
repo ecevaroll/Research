@@ -1,0 +1,25 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	run_sims
+	1
+
+[Thu Sep 24 12:30:02 2020]
+rule run_sims:
+    input: data.txt, simulation.slim
+    output: 10000_1.txt
+    jobid: 0
+
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 24 of /Users/ecevarol/Desktop/Research/lower_threshold_project/Snakefile:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+10000_1.txt
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+  File "/Users/ecevarol/opt/miniconda3/envs/snakemake/lib/python3.8/site-packages/snakemake/executors/__init__.py", line 544, in handle_job_success
+  File "/Users/ecevarol/opt/miniconda3/envs/snakemake/lib/python3.8/site-packages/snakemake/executors/__init__.py", line 225, in handle_job_success
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /Users/ecevarol/Desktop/Research/lower_threshold_project/.snakemake/log/2020-09-24T123001.498905.snakemake.log

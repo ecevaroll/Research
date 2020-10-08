@@ -18,13 +18,16 @@ initialize(){
 	m1.convertToSubstitution=T;
 	m2.convertToSubstitution=T;
 	defineConstant("selec",0.3); //fitness cost of disease
-	defineConstant("envVar", 0.05);
 	defineConstant("h2", 0.5); //heritability
 	defineConstant("init_pop", 5000);//initial population size
 	defineConstant("mu", (1e-7)); //mutations per base position per generation
 	defineConstant("gamma", log(rho / (1-rho)));
 	defineConstant("s", gamma/ (4 * init_pop));
 	defineConstant("stdev", sqrt(4* L * mu/s * (exp(gamma)-1)/(exp(gamma)+1)));
+	if (adjustment == 0.0) {
+		defineConstant("out", asString(L) + "_" + asString(thres) + "_test.txt");}
+	else {
+		defineConstant("out", asString(L) + "_" + asString(thres)+ ".txt");}
 	
 }
 
@@ -47,7 +50,7 @@ initialize(){
           sum(sim.substitutions.mutationType == m1));
         negGenLi = inds.countOfMutationsOfType(m2) +	       
           sum(sim.substitutions.mutationType == m2);
-	genLi = (posGenLi - negGenLi);
+	genLi = (thres-adjustment) + (posGenLi - negGenLi);
 	
 	
 // add in environmental variance, according to the target heritability
@@ -58,11 +61,16 @@ initialize(){
         	V_A = var(genLi);
         	V_E = var(inds.tagF);
 		meanGenLi=mean(genLi);
-		test_line = paste(sim.generation+ " " + V_A + " " + mean(inds.tagF));
-		writeFile("env_var.txt", test_line, append=T);
-
 		
-}
+		if (adjustment == 0.0) {
+			test_line = paste(V_A + " " + mean(inds.tagF));}
+		else {
+			prev = sum(inds.tagF > thres)/size(inds);
+         risk = (sum(inds.tagF > (thres - 1))/size(inds)) - prev ;
+			test_line = paste((V_A/(V_A + V_E)) + " " + V_A + " " + prev + " " + risk + " "+ mean(inds.tagF));}
+		
+		writeFile(out, test_line, append=T);	
+} 
 
 fitness(m1){
 	return 1.0;

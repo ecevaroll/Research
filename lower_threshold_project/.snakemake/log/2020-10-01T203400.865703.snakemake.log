@@ -1,0 +1,3 @@
+NameError in line 3 of /Users/ecevarol/Desktop/Research/lower_threshold_project/Snakefile:
+name 'L' is not defined
+  File "/Users/ecevarol/Desktop/Research/lower_threshold_project/Snakefile", line 3, in <module>

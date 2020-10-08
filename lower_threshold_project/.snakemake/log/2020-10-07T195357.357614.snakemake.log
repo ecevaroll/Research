@@ -1,0 +1,2 @@
+SyntaxError in line 21 of /Users/ecevarol/Desktop/Research/lower_threshold_project/Snakefile:
+No rule keywords allowed after run/shell/script/wrapper/cwl in rule calc_vals. (Snakefile, line 21)

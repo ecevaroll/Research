@@ -1,0 +1,28 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	calc_vals
+	1	get_data
+	1	run_sims
+	3
+
+[Mon Sep 14 17:42:52 2020]
+rule get_data:
+    input: simulation.slim
+    output: env_var.txt
+    jobid: 2
+
+[Mon Sep 14 17:42:52 2020]
+Error in rule get_data:
+    jobid: 2
+    output: env_var.txt
+    shell:
+        slim -d out='env_var.txt' -d envVar=0.05 -d adjustment=0 -d L=1e4 -d thres=1 simulation.slim
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /Users/ecevarol/Desktop/Research/lower_threshold_project/.snakemake/log/2020-09-14T174252.183417.snakemake.log

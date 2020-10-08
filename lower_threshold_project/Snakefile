@@ -1,22 +1,73 @@
+
 import pandas as pd
+
+NUM_SITES = {10000}
+THRES = {1, 5, 10, 30, 100}
 
 rule get_data:
 	input:
 		"simulation.slim"
 	output:
-		"env_var.txt"
-	shell:
-		"slim -d L=10e4 -d thres=1 {input}"
+		expand(["{L}_{T}_test.txt"], L = NUM_SITES, T=THRES)
+	run:
+		for i in NUM_SITES:
+			for t in THRES:
+				shell('slim -d envVar=0.05 -d adjustment=0 -d L={i} -d thres={t} {input}')
 
 rule calc_vals:
 	input:
-		"env_var.txt"
+		expand(["{L}_{T}_test.txt"], L = NUM_SITES, T=THRES)
 	output:
-		"data.txt"
+		expand(["{L}_{T}_data.txt"], L = NUM_SITES, T=THRES)
 	run:
-		data = pd.read_csv(str(input), sep=" ", header=None)
+		for i in NUM_SITES:
+			for t in THRES:
+				data = pd.read_csv(str(str(i) +"_" + str(t) + "_test.txt"), sep=" ", header=None)
+				env_var = data.iloc[20000:30000,0].mean()
+				liability = data.iloc[5000:10000, 1].mean()				
+				with open((str(i) +"_" + str(t) + "_data.txt"), "w") as out:
+					out.write("{}\n{}".format(str(env_var), str(liability)))
 
-		env_var = data[1,].iloc[,20000:40000].mean()
-		liability = data[2,].iloc[,5000:10000].mean()
-		with open(output[0], "w") as out:
-			out.write("{}  {}".format(str(env_var), str(liability)))
+rule run_sims:
+	input:
+		expand(["{L}_{T}_data.txt"], L = NUM_SITES, T=THRES)
+	output:
+		expand(["{L}_{T}.txt"], L = NUM_SITES, T=THRES)
+	run:
+		for i in NUM_SITES:
+			for t in THRES:
+				shell("declare var=$(sed -n '1p' {input}) declare adj=$(sed -n '2p' {input}); slim -d envVar=$var -d adjustment=$adj -d L={i} -d thres={t} simulation.slim")
+
+rule analyze:
+	input:
+		expand(["{L}_{T}.txt"], L = NUM_SITES, T=THRES)
+	output:
+		expand(["{L}_{T}_analysis.txt"], L = NUM_SITES, T=THRES)
+	run:
+		for i in NUM_SITES:
+			for t in THRES:
+				name = str(i) + "_" + str(t)
+				df = pd.read_csv((str(i) +"_" + str(t) + ".txt"), sep=" ", header=i, names=["Heritability", "Genetic Variance", "Prevalance", "Risk", "Mean Liability"])
+				data = df.mean()
+				data.to_csv(name+ "_analysis.txt")
+
+rule summary:
+	input:
+		expand(["{L}_{T}_analysis.txt"], L = NUM_SITES, T=THRES)
+	output:
+		"summary.csv"
+	run:
+		d = 0
+		summary = pd.DataFrame(index = ["Heritability", "Genetic Variance", "Prevalance", "Risk", "Mean Liability"])
+		for i in NUM_SITES:
+			for t in THRES:
+				name = str(i) + "_" + str(t)
+				df = pd.read_csv((str(i) +"_" + str(t) + "_analysis.txt"), sep=",", header=0, index_col = 0)
+				df.rename(index={0: str(i) + "_" + str(t)})
+				summary = summary.join(df, how='left', lsuffix=name, rsuffix=name)
+				d = d+1
+		summary.to_csv("summary.csv")
+
+
+
+

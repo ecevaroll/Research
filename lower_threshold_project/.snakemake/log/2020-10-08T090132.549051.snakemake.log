@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	analyze
+	1
+
+[Thu Oct  8 09:01:33 2020]
+rule analyze:
+    input: 10000_1.txt, 10000_100.txt, 10000_5.txt, 10000_10.txt, 10000_30.txt
+    output: 10000_1_analysis.txt, 10000_100_analysis.txt, 10000_5_analysis.txt, 10000_10_analysis.txt, 10000_30_analysis.txt
+    jobid: 0
+
+[Thu Oct  8 09:01:34 2020]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /Users/ecevarol/Desktop/Research/lower_threshold_project/.snakemake/log/2020-10-08T090132.549051.snakemake.log

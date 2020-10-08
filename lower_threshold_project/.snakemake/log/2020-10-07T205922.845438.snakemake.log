@@ -1,0 +1,29 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	analyze
+	1	run_sims
+	2
+
+[Wed Oct  7 20:59:23 2020]
+rule run_sims:
+    input: 10000_1_data.txt, 10000_100_data.txt, 10000_5_data.txt, 10000_10_data.txt, 10000_30_data.txt
+    output: 10000_1.txt, 10000_100.txt, 10000_5.txt, 10000_10.txt, 10000_30.txt
+    jobid: 1
+
+[Wed Oct  7 21:21:45 2020]
+Finished job 1.
+1 of 2 steps (50%) done
+
+[Wed Oct  7 21:21:45 2020]
+rule analyze:
+    input: 10000_1.txt, 10000_100.txt, 10000_5.txt, 10000_10.txt, 10000_30.txt
+    output: summary.csv
+    jobid: 0
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /Users/ecevarol/Desktop/Research/lower_threshold_project/.snakemake/log/2020-10-07T205922.845438.snakemake.log
