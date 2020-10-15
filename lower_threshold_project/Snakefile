@@ -1,7 +1,8 @@
 
 import pandas as pd
+import matplotlib.pyplot as plt
 
-NUM_SITES = {10000}
+NUM_SITES = {31622, 10000, 3162,1000}
 THRES = {1, 5, 10, 30, 100}
 
 rule get_data:
@@ -58,15 +59,28 @@ rule summary:
 		"summary.csv"
 	run:
 		d = 0
-		summary = pd.DataFrame(index = ["Heritability", "Genetic Variance", "Prevalance", "Risk", "Mean Liability"])
+		summary = pd.DataFrame(columns=["Heritability", "Genetic Variance", "Prevalance", "Risk", "Mean Liability", "Threshold", "Number Sites"])
 		for i in NUM_SITES:
 			for t in THRES:
 				name = str(i) + "_" + str(t)
 				df = pd.read_csv((str(i) +"_" + str(t) + "_analysis.txt"), sep=",", header=0, index_col = 0)
-				df.rename(index={0: str(i) + "_" + str(t)})
-				summary = summary.join(df, how='left', lsuffix=name, rsuffix=name)
-				d = d+1
+				df_t = df.T
+				df_t.index_col = str(t)
+				df_t = df_t.rename(index = {"0":name})
+				df_t["Threshold"] = t
+				df_t["Number Sites"] = i
+				summary = pd.concat([summary,df_t], axis=0)
 		summary.to_csv("summary.csv")
+
+rule plot:
+	input:
+		"summary.csv"
+	output:
+		"plot.png"
+	run:
+		df = pd.read_csv("summary.csv", sep=",", header=0, index_col = 0)
+		df.plot.scatter(x="Number Sites", y= "Prevalance")
+		plt.savefig('plot.png')
 
 
 
