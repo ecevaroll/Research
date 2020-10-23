@@ -1,0 +1,22 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	analyze
+	1	calc_vals
+	1	get_data
+	1	plot
+	1	run_sims
+	1	summary
+	6
+
+[Thu Oct 15 11:05:23 2020]
+rule get_data:
+    input: simulation.slim
+    output: 10000_1_test.txt, 10000_100_test.txt, 10000_5_test.txt, 10000_10_test.txt, 10000_30_test.txt, 1000_1_test.txt, 1000_100_test.txt, 1000_5_test.txt, 1000_10_test.txt, 1000_30_test.txt, 3162_1_test.txt, 3162_100_test.txt, 3162_5_test.txt, 3162_10_test.txt, 3162_30_test.txt, 31622_1_test.txt, 31622_100_test.txt, 31622_5_test.txt, 31622_10_test.txt, 31622_30_test.txt
+    jobid: 5
+
+Terminating processes on user request, this might take some time.
+Complete log: /Users/ecevarol/Desktop/Research/lower_threshold_project/.snakemake/log/2020-10-15T110521.455943.snakemake.log

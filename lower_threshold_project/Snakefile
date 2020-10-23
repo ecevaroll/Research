@@ -1,8 +1,9 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
-NUM_SITES = {31622, 10000, 3162,1000}
+NUM_SITES = {10000}
 THRES = {1, 5, 10, 30, 100}
 
 rule get_data:
@@ -79,7 +80,7 @@ rule plot:
 		"plot.png"
 	run:
 		df = pd.read_csv("summary.csv", sep=",", header=0, index_col = 0)
-		df.plot.scatter(x="Number Sites", y= "Prevalance")
+		df.plot.scatter(x="Number Sites", y="Prevalance")
 		plt.savefig('plot.png')
 
 
