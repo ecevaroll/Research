@@ -1,0 +1,38 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	get_data
+	1
+
+[Mon Oct 26 14:48:02 2020]
+rule get_data:
+    input: simulation.slim
+    output: 10000_1_test.txt, 10000_100_test.txt, 10000_5_test.txt, 10000_10_test.txt, 10000_30_test.txt, 1000_1_test.txt, 1000_100_test.txt, 1000_5_test.txt, 1000_10_test.txt, 1000_30_test.txt, 3162_1_test.txt, 3162_100_test.txt, 3162_5_test.txt, 3162_10_test.txt, 3162_30_test.txt, 31622_1_test.txt, 31622_100_test.txt, 31622_5_test.txt, 31622_10_test.txt, 31622_30_test.txt
+    jobid: 0
+
+slim -d envVar=0.05 -d adjustment=0 -d L=10000 -d thres=1 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=10000 -d thres=100 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=10000 -d thres=5 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=10000 -d thres=10 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=10000 -d thres=30 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=1000 -d thres=1 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=1000 -d thres=100 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=1000 -d thres=5 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=1000 -d thres=10 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=1000 -d thres=30 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=3162 -d thres=1 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=3162 -d thres=100 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=3162 -d thres=5 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=3162 -d thres=10 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=3162 -d thres=30 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=31622 -d thres=1 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=31622 -d thres=100 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=31622 -d thres=5 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=31622 -d thres=10 simulation.slim
+slim -d envVar=0.05 -d adjustment=0 -d L=31622 -d thres=30 simulation.slim
+[Mon Oct 26 15:39:36 2020]
+Finished job 0.
+1 of 1 steps (100%) done

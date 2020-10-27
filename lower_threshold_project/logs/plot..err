@@ -1,0 +1,18 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	plot
+	1
+
+[Tue Oct 27 10:56:26 2020]
+rule plot:
+    input: summary.csv
+    output: plot.png
+    jobid: 0
+
+[Tue Oct 27 10:56:27 2020]
+Finished job 0.
+1 of 1 steps (100%) done

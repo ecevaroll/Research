@@ -1,0 +1,12 @@
+KeyboardInterrupt in line 3 of /home/evarol/Research/Research/lower_threshold_project/Snakefile.
+  File "/home/evarol/Research/Research/lower_threshold_project/Snakefile", line 3, in <module>
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/site-packages/matplotlib/pyplot.py", line 34, in <module>
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/site-packages/matplotlib/style/__init__.py", line 1, in <module>
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/site-packages/matplotlib/style/core.py", line 212, in <module>
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/site-packages/matplotlib/style/core.py", line 153, in load_base_library
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/site-packages/matplotlib/style/core.py", line 188, in read_style_directory
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/site-packages/matplotlib/__init__.py", line 1070, in rc_params_from_file
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/site-packages/matplotlib/__init__.py", line 986, in _rc_params_in_file
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/contextlib.py", line 112, in __enter__
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/site-packages/matplotlib/__init__.py", line 971, in _open_file_or_url
+  File "/software/python-3.7.0-el7-x86_64/lib/python3.7/codecs.py", line 309, in __init__

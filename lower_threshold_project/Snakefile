@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-NUM_SITES = {10000}
+NUM_SITES = {31622,10000, 3162,1000,}
 THRES = {1, 5, 10, 30, 100}
 
 rule get_data:

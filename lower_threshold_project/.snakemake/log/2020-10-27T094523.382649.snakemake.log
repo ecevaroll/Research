@@ -1,0 +1,52 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cluster nodes: 500
+Job counts:
+	count	jobs
+	1	analyze
+	1	calc_vals
+	1	plot
+	1	run_sims
+	1	summary
+	5
+
+[Tue Oct 27 09:45:42 2020]
+rule calc_vals:
+    input: 10000_1_test.txt, 10000_100_test.txt, 10000_5_test.txt, 10000_10_test.txt, 10000_30_test.txt, 1000_1_test.txt, 1000_100_test.txt, 1000_5_test.txt, 1000_10_test.txt, 1000_30_test.txt, 3162_1_test.txt, 3162_100_test.txt, 3162_5_test.txt, 3162_10_test.txt, 3162_30_test.txt, 31622_1_test.txt, 31622_100_test.txt, 31622_5_test.txt, 31622_10_test.txt, 31622_30_test.txt
+    output: 10000_1_data.txt, 10000_100_data.txt, 10000_5_data.txt, 10000_10_data.txt, 10000_30_data.txt, 1000_1_data.txt, 1000_100_data.txt, 1000_5_data.txt, 1000_10_data.txt, 1000_30_data.txt, 3162_1_data.txt, 3162_100_data.txt, 3162_5_data.txt, 3162_10_data.txt, 3162_30_data.txt, 31622_1_data.txt, 31622_100_data.txt, 31622_5_data.txt, 31622_10_data.txt, 31622_30_data.txt
+    jobid: 4
+
+Submitted job 4 with external jobid 'Submitted batch job 6468177'.
+
+[Tue Oct 27 09:45:43 2020]
+rule run_sims:
+    input: 10000_1_data.txt, 10000_100_data.txt, 10000_5_data.txt, 10000_10_data.txt, 10000_30_data.txt, 1000_1_data.txt, 1000_100_data.txt, 1000_5_data.txt, 1000_10_data.txt, 1000_30_data.txt, 3162_1_data.txt, 3162_100_data.txt, 3162_5_data.txt, 3162_10_data.txt, 3162_30_data.txt, 31622_1_data.txt, 31622_100_data.txt, 31622_5_data.txt, 31622_10_data.txt, 31622_30_data.txt
+    output: 10000_1.txt, 10000_100.txt, 10000_5.txt, 10000_10.txt, 10000_30.txt, 1000_1.txt, 1000_100.txt, 1000_5.txt, 1000_10.txt, 1000_30.txt, 3162_1.txt, 3162_100.txt, 3162_5.txt, 3162_10.txt, 3162_30.txt, 31622_1.txt, 31622_100.txt, 31622_5.txt, 31622_10.txt, 31622_30.txt
+    jobid: 3
+
+Submitted job 3 with external jobid 'Submitted batch job 6468178'.
+
+[Tue Oct 27 09:45:44 2020]
+rule analyze:
+    input: 10000_1.txt, 10000_100.txt, 10000_5.txt, 10000_10.txt, 10000_30.txt, 1000_1.txt, 1000_100.txt, 1000_5.txt, 1000_10.txt, 1000_30.txt, 3162_1.txt, 3162_100.txt, 3162_5.txt, 3162_10.txt, 3162_30.txt, 31622_1.txt, 31622_100.txt, 31622_5.txt, 31622_10.txt, 31622_30.txt
+    output: 10000_1_analysis.txt, 10000_100_analysis.txt, 10000_5_analysis.txt, 10000_10_analysis.txt, 10000_30_analysis.txt, 1000_1_analysis.txt, 1000_100_analysis.txt, 1000_5_analysis.txt, 1000_10_analysis.txt, 1000_30_analysis.txt, 3162_1_analysis.txt, 3162_100_analysis.txt, 3162_5_analysis.txt, 3162_10_analysis.txt, 3162_30_analysis.txt, 31622_1_analysis.txt, 31622_100_analysis.txt, 31622_5_analysis.txt, 31622_10_analysis.txt, 31622_30_analysis.txt
+    jobid: 2
+
+Submitted job 2 with external jobid 'Submitted batch job 6468179'.
+
+[Tue Oct 27 09:45:44 2020]
+rule summary:
+    input: 10000_1_analysis.txt, 10000_100_analysis.txt, 10000_5_analysis.txt, 10000_10_analysis.txt, 10000_30_analysis.txt, 1000_1_analysis.txt, 1000_100_analysis.txt, 1000_5_analysis.txt, 1000_10_analysis.txt, 1000_30_analysis.txt, 3162_1_analysis.txt, 3162_100_analysis.txt, 3162_5_analysis.txt, 3162_10_analysis.txt, 3162_30_analysis.txt, 31622_1_analysis.txt, 31622_100_analysis.txt, 31622_5_analysis.txt, 31622_10_analysis.txt, 31622_30_analysis.txt
+    output: summary.csv
+    jobid: 1
+
+Submitted job 1 with external jobid 'Submitted batch job 6468180'.
+
+[Tue Oct 27 09:45:44 2020]
+rule plot:
+    input: summary.csv
+    output: plot.png
+    jobid: 0
+
+Submitted job 0 with external jobid 'Submitted batch job 6468181'.
+Complete log: /home/evarol/Research/Research/lower_threshold_project/.snakemake/log/2020-10-27T094523.382649.snakemake.log

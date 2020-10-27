@@ -1,0 +1,16 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cluster nodes: 500
+Job counts:
+	count	jobs
+	1	get_data
+	1
+
+[Mon Oct 26 14:48:00 2020]
+rule get_data:
+    input: simulation.slim
+    output: 10000_1_test.txt, 10000_100_test.txt, 10000_5_test.txt, 10000_10_test.txt, 10000_30_test.txt, 1000_1_test.txt, 1000_100_test.txt, 1000_5_test.txt, 1000_10_test.txt, 1000_30_test.txt, 3162_1_test.txt, 3162_100_test.txt, 3162_5_test.txt, 3162_10_test.txt, 3162_30_test.txt, 31622_1_test.txt, 31622_100_test.txt, 31622_5_test.txt, 31622_10_test.txt, 31622_30_test.txt
+    jobid: 0
+
+Submitted job 0 with external jobid 'Submitted batch job 6453243'.
+Complete log: /home/evarol/Research/Research/lower_threshold_project/.snakemake/log/2020-10-26T144758.441669.snakemake.log
