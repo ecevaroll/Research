@@ -80,7 +80,10 @@ rule plot:
 		"plot.png"
 	run:
 		df = pd.read_csv("summary.csv", sep=",", header=0, index_col = 0)
-		df.plot.scatter(x="Number Sites", y="Prevalance")
+		groups = df.groupby("Threshold")
+		for name, group in groups:
+    		plt.scatter(group["Number Sites"], group["Prevalance"], marker="o", label=name)
+		plt.legend(title="Threshold Value")
 		plt.savefig('plot.png')
 
 
