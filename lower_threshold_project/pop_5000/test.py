@@ -6,4 +6,4 @@ groups = df.groupby("Threshold")
 for name, group in groups:
     plt.scatter(group["Number Sites"], group["Prevalance"], marker="o", label=name)
 plt.legend(title="Threshold Value")
-plt.show()
+plt.savefig('plot_test.png')

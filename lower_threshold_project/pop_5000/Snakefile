@@ -1,0 +1,91 @@
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+NUM_SITES = {31622,10000, 3162,1000,}
+THRES = {1, 5, 10, 30, 100}
+
+rule get_data:
+	input:
+		"simulation.slim"
+	output:
+		expand(["{L}_{T}_test.txt"], L = NUM_SITES, T=THRES)
+	run:
+		for i in NUM_SITES:
+			for t in THRES:
+				shell('slim -d envVar=0.05 -d adjustment=0 -d L={i} -d thres={t} {input}')
+
+rule calc_vals:
+	input:
+		expand(["{L}_{T}_test.txt"], L = NUM_SITES, T=THRES)
+	output:
+		expand(["{L}_{T}_data.txt"], L = NUM_SITES, T=THRES)
+	run:
+		for i in NUM_SITES:
+			for t in THRES:
+				data = pd.read_csv(str(str(i) +"_" + str(t) + "_test.txt"), sep=" ", header=None)
+				env_var = data.iloc[20000:30000,0].mean()
+				liability = data.iloc[5000:10000, 1].mean()				
+				with open((str(i) +"_" + str(t) + "_data.txt"), "w") as out:
+					out.write("{}\n{}".format(str(env_var), str(liability)))
+
+rule run_sims:
+	input:
+		expand(["{L}_{T}_data.txt"], L = NUM_SITES, T=THRES)
+	output:
+		expand(["{L}_{T}.txt"], L = NUM_SITES, T=THRES)
+	run:
+		for i in NUM_SITES:
+			for t in THRES:
+				shell("declare var=$(sed -n '1p' {input}) declare adj=$(sed -n '2p' {input}); slim -d envVar=$var -d adjustment=$adj -d L={i} -d thres={t} simulation.slim")
+
+rule analyze:
+	input:
+		expand(["{L}_{T}.txt"], L = NUM_SITES, T=THRES)
+	output:
+		expand(["{L}_{T}_analysis.txt"], L = NUM_SITES, T=THRES)
+	run:
+		for i in NUM_SITES:
+			for t in THRES:
+				name = str(i) + "_" + str(t)
+				df = pd.read_csv((str(i) +"_" + str(t) + ".txt"), sep=" ", header=i, names=["Heritability", "Genetic Variance", "Prevalance", "Risk", "Mean Liability"])
+				data = df.mean()
+				data.to_csv(name+ "_analysis.txt")
+
+rule summary:
+	input:
+		expand(["{L}_{T}_analysis.txt"], L = NUM_SITES, T=THRES)
+	output:
+		"summary.csv"
+	run:
+		d = 0
+		summary = pd.DataFrame(columns=["Heritability", "Genetic Variance", "Prevalance", "Risk", "Mean Liability", "Threshold", "Number Sites"])
+		for i in NUM_SITES:
+			for t in THRES:
+				name = str(i) + "_" + str(t)
+				df = pd.read_csv((str(i) +"_" + str(t) + "_analysis.txt"), sep=",", header=0, index_col = 0)
+				df_t = df.T
+				df_t.index_col = str(t)
+				df_t = df_t.rename(index = {"0":name})
+				df_t["Threshold"] = t
+				df_t["Number Sites"] = i
+				summary = pd.concat([summary,df_t], axis=0)
+		summary.to_csv("summary.csv")
+
+rule plot:
+	input:
+		"summary.csv"
+	output:
+		"plot.png"
+	run:
+		df = pd.read_csv("summary.csv", sep=",", header=0, index_col = 0)
+		groups = df.groupby("Threshold")
+		for name, group in groups:
+    		plt.scatter(group["Number Sites"], group["Prevalance"], marker="o", label=name)
+		plt.legend(title="Threshold Value")
+		plt.savefig('plot.png')
+
+
+
+

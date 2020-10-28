@@ -1,0 +1,90 @@
+initialize(){
+	initializeMutationRate(1e-7);
+	
+	//Neutral Mutation m1 Beneficial Mutation m2
+	initializeMutationType("m1",0.5,"f",0);
+	initializeMutationType("m2",0.5,"f",0);
+	
+	//Initialize the particular TYPE of chromosomal region of interest (intron exon 
+	defineConstant("rho", 0); //percent of protective mutations
+	initializeGenomicElementType("g1",c(m1,m2),c((1-rho),rho));
+	
+	//initialize the specific region of the genetic element defined above
+	//defineConstant("L", 1e4); //number of sites
+	initializeGenomicElement(g1, 0, L);
+	
+	//initialize the probability of crossover
+	initializeRecombinationRate(1e-5);
+	m1.convertToSubstitution=T;
+	m2.convertToSubstitution=T;
+	defineConstant("selec",0.3); //fitness cost of disease
+	defineConstant("h2", 0.5); //heritability
+	defineConstant("init_pop", 1000);//initial population size
+	defineConstant("mu", (1e-7)); //mutations per base position per generation
+	defineConstant("gamma", log(rho / (1-rho)));
+	defineConstant("s", gamma/ (4 * init_pop));
+	defineConstant("stdev", sqrt(4* L * mu/s * (exp(gamma)-1)/(exp(gamma)+1)));
+	if (adjustment == 0.0) {
+		defineConstant("out", asString(L) + "_" + asString(thres) + "_test.txt");}
+	else {
+		defineConstant("out", asString(L) + "_" + asString(thres)+ ".txt");}
+	
+}
+
+
+//Eidos event for generation 1 that will create a new subpopulation of 500 individuals named p1
+
+
+1 {
+	sim.addSubpop("p1", init_pop);
+}
+
+
+
+
+1:late() {
+	
+// sum the additive effects of QTLs
+	inds = sim.subpopulations.individuals;
+        posGenLi = asFloat(inds.countOfMutationsOfType(m1) + 
+          sum(sim.substitutions.mutationType == m1));
+        negGenLi = inds.countOfMutationsOfType(m2) +	       
+          sum(sim.substitutions.mutationType == m2);
+	genLi = (thres-adjustment) + (posGenLi - negGenLi);
+	
+	
+// add in environmental variance, according to the target heritability
+	env = rnorm(size(inds), 0.0, envVar);
+        liability = genLi + env;
+        inds.tagF = liability;
+	
+        	V_A = var(genLi);
+        	V_E = var(inds.tagF);
+		meanGenLi=mean(genLi);
+		
+		if (adjustment == 0.0) {
+			test_line = paste(V_A + " " + mean(inds.tagF));}
+		else {
+			prev = sum(inds.tagF > thres)/size(inds);
+         risk = (sum(inds.tagF > (thres - 1))/size(inds)) - prev ;
+			test_line = paste((V_A/(V_A + V_E)) + " " + V_A + " " + prev + " " + risk + " "+ mean(inds.tagF));}
+		
+		writeFile(out, test_line, append=T);	
+} 
+
+fitness(m1){
+	return 1.0;
+}
+fitness(m2){
+	return 1.0;
+}
+
+fitness(NULL){
+	return 1.0 - selec * asFloat(individual.tagF>thres);
+}
+
+//End simulation at generation 20000
+
+40000 {
+	sim.simulationFinished();
+}
