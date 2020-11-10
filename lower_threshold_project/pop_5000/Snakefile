@@ -3,9 +3,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
+#Number of Sites and Threshold Values we want to simulate
 NUM_SITES = {31622,10000, 3162,1000,}
 THRES = {1, 5, 10, 30, 100}
 
+#Rule for a test run of the simulation to 
 rule get_data:
 	input:
 		"simulation.slim"
@@ -16,6 +18,8 @@ rule get_data:
 			for t in THRES:
 				shell('slim -d envVar=0.05 -d adjustment=0 -d L={i} -d thres={t} {input}')
 
+
+#Rule to calculate the environmental variance and liability adjustment that goes into the real simulation
 rule calc_vals:
 	input:
 		expand(["{L}_{T}_test.txt"], L = NUM_SITES, T=THRES)
@@ -30,6 +34,7 @@ rule calc_vals:
 				with open((str(i) +"_" + str(t) + "_data.txt"), "w") as out:
 					out.write("{}\n{}".format(str(env_var), str(liability)))
 
+#Rule to run the simulations with the environmental variance and liability adjustment from the test simulation
 rule run_sims:
 	input:
 		expand(["{L}_{T}_data.txt"], L = NUM_SITES, T=THRES)
@@ -40,6 +45,8 @@ rule run_sims:
 			for t in THRES:
 				shell("declare var=$(sed -n '1p' {input}) declare adj=$(sed -n '2p' {input}); slim -d envVar=$var -d adjustment=$adj -d L={i} -d thres={t} simulation.slim")
 
+
+#Rule that analyzes each simulation and finds average value of Heritability, Genetic Variance, Prevalance, Risk Effect and Mean Liability
 rule analyze:
 	input:
 		expand(["{L}_{T}.txt"], L = NUM_SITES, T=THRES)
@@ -53,6 +60,8 @@ rule analyze:
 				data = df.mean()
 				data.to_csv(name+ "_analysis.txt")
 
+
+#Rule that combines all the analysis from simulations into one dataframe
 rule summary:
 	input:
 		expand(["{L}_{T}_analysis.txt"], L = NUM_SITES, T=THRES)
@@ -73,6 +82,8 @@ rule summary:
 				summary = pd.concat([summary,df_t], axis=0)
 		summary.to_csv("summary.csv")
 
+
+#Rule that plots everything
 rule plot:
 	input:
 		"summary.csv"
@@ -80,11 +91,34 @@ rule plot:
 		"plot.png"
 	run:
 		df = pd.read_csv("summary.csv", sep=",", header=0, index_col = 0)
-		groups = df.groupby("Threshold")
+		groups = df.sort_values(by=['Number Sites'], ascending=False).groupby("Threshold")
+		markers = ["o", "v", "*", "p"]
+		colors = ["red", "blue", "orange", "yellow", "green"]
+
+		j = 0
 		for name, group in groups:
-    		plt.scatter(group["Number Sites"], group["Prevalance"], marker="o", label=name)
+		    plt.scatter(group["Number Sites"], group["Prevalance"], marker="o", label=name, color=colors[j])
+		    j += 1
 		plt.legend(title="Threshold Value")
-		plt.savefig('plot.png')
+		plt.savefig('Prev_plot.png')
+
+		fig, ax = plt.subplots()
+		j = 0
+		for name, group in groups:
+			for i in markers:
+				#assign different value to every Number of Site and a color for every threshold value 
+				scatter = ax.scatter(group["Risk"], group["Prevalance"], marker=i, label=name, color=colors[j])
+			j += 1
+
+		handles1 = [plt.scatter([0], [0], marker="o", color = c) for c in colors]
+		handles2 = [plt.scatter([0], [0], marker=c, color ="black") for c in markers]
+
+		legend1= ax.legend(handles1,[THRES], title ="Threshold", loc="center right")
+		legend2 = ax.legend(handles2,[NUM_SITES], title ="Number of Sites", loc="lower right")
+		ax.add_artist(legend1)
+		ax.add_artist(legend2)
+		plt.savefig('Risk_plot.png')
+
 
 
 

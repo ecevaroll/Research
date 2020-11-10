@@ -71,7 +71,8 @@ initialize(){
 			
 			if((sim.generation > 15000) & (sim.generation % 100 == 0)){
 				hist_line = paste(inds.tagF);
-				writeFile(asString(L) + "_" + asString(thres)+ "histogram".txt, paste(sim.generation + "," + hist_line));
+				name = asString(L) + "_" + asString(thres)+ "histogram.txt";
+				writeFile(name, paste(sim.generation + "," + hist_line), append = T);
 			}
 		}
 			
