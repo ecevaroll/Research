@@ -67,8 +67,14 @@ initialize(){
 		else {
 			prev = sum(inds.tagF > thres)/size(inds);
          risk = (sum(inds.tagF > (thres - 1))/size(inds)) - prev ;
-			test_line = paste((V_A/(V_A + V_E)) + " " + V_A + " " + prev + " " + risk + " "+ mean(inds.tagF));}
-		
+			test_line = paste((V_A/(V_A + V_E)) + " " + V_A + " " + prev + " " + risk + " "+ mean(inds.tagF));
+			
+			if((sim.generation > 15000) & (sim.generation % 100 == 0)){
+				hist_line = paste(inds.tagF);
+				writeFile(asString(L) + "_" + asString(thres)+ "histogram".txt, paste(sim.generation + "," + hist_line));
+			}
+		}
+			
 		writeFile(out, test_line, append=T);	
 } 
 
