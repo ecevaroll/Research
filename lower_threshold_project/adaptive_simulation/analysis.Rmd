@@ -1,0 +1,11 @@
+
+
+```{r}
+
+fd1 = "simulation.txt"
+simulation = read.table(fd1, sep= " ")
+
+fd1 = "slope.txt"
+slopes = read.table(fd1, sep= " ")
+
+```
