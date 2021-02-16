@@ -79,10 +79,10 @@ initialize() {
 		//writeFile("genetic_variance.txt", paste(V_A), append=T);
 		
 		//CALCULATE SEG SITES
-		seg_sites = sortBy(unique(sim.subpopulations.genomes.mutations), "position");
+		seg_sites = size(unique(sim.subpopulations.genomes.mutations));
 		
 		//OUTPUT GENETIC VARIANCE, MEAN LIAB, NUM SEG SITES
-		writeFile("simulation.txt", paste(V_A + " " + mean(inds.tagF)+ " " + size(seg_sites)), append=T);
+		writeFile("simulation.txt", paste(V_A + " " + mean(inds.tagF)+ " " + seg_sites), append=T);
 		
 		//Every 5000 generations read the file
 		if ((sim.generation % 5000) == 0) {
