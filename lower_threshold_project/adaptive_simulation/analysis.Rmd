@@ -5,7 +5,10 @@
 fd1 = "simulation.txt"
 simulation = read.table(fd1, sep= " ")
 
-fd1 = "slope.txt"
-slopes = read.table(fd1, sep= " ")
+time <- seq(1, nrow(simulation))
+
+plot(time, simulation[[1]], type= "l",xlab= "Generations Passed since Threshold", ylab="Genetic Variance")
+plot(time, simulation[[2]], type= "l",xlab= "Generations Passed since Threshold", ylab="Mean Liability")
+plot(time, simulation[[3]], type= "l",xlab= "Generations Passed since Threshold", ylab="Number of Segregating Sites")
 
 ```

@@ -76,7 +76,7 @@ initialize() {
 	} else {
 	
 		//write the genetic variance to a file every generation.
-		//writeFile("genetic_variance.txt", paste(V_A), append=T);
+		writeFile("genetic_variance.txt", paste(V_A), append=T);
 		
 		//CALCULATE SEG SITES
 		seg_sites = size(unique(sim.subpopulations.genomes.mutations));
