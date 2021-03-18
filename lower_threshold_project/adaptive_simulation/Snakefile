@@ -1,0 +1,40 @@
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+NUM_SITES = {10000}
+
+#rule that will run the simulation and output the population state in the beginning of threshold turned
+rule runSim: 
+    input:
+        "simulation.slim"
+    output:
+        expand(["{L}_info.txt", "model_output_{L}.txt"], L = NUM_SITES)
+    run:
+        for i in NUM_SITES:
+            shell('slim -d L={i} -d status=1 {input}')
+
+rule analysis:
+    input:
+        expand(["{L}_info.txt"], L = NUM_SITES)
+    output:
+        expand(["{L}_analysis.txt"], L = NUM_SITES)
+    run:
+        for i in NUM_SITES:
+            data = pd.read_csv(str(str(i) + "_info.txt"), sep=" ", header=None)
+            env_var = data.iloc[100000:,0].mean()
+            t = data.iloc[0,3]
+            with open((str(i) + "_analysis.txt"), "w") as out:
+                out.write("{}\n{}".format(str(env_var), str(t)))
+
+#re-run the population that was outputted adding the environmental variance
+#rule reRunSims:
+#	input:
+#		expand(["{L}_analysis.txt"], L = NUM_SITES)
+#	output:
+#		expand(["{L}_final.txt"], L = NUM_SITES)
+#	run:
+#        for i in NUM_SITES:
+#            shell("declare var=$(sed -n '1p' {input}) declare t=$(sed -n '2p' {input}); slim -d L={i} -d status=2 -d thres=$t -d envVar=$var simulation.slim")
+

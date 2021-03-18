@@ -11,13 +11,12 @@ initialize() {
 	initializeGenomicElementType("g1", m1, 1.0);
 	m1.convertToSubstitution=T;
 	
-	L = 100000;
-	
+
 	// uniform chromosome of length 100 kb with uniform recombination
 	initializeGenomicElement(g1, 0, L);
 	initializeRecombinationRate(1e-5);
 
-	
+	defineConstant("L",100);
 	defineConstant("selec",0.3); //fitness cost of disease
 	defineConstant("h2", 0.5); //heritability
 	defineConstant("init_pop", 5000);//initial population size
@@ -33,91 +32,83 @@ initialize() {
 
 // create a population of 500 individuals
 1 {
-	sim.addSubpop("p1", init_pop);
+	if (status == 1) {
+		sim.addSubpop("p1", init_pop);
+		sim.tag = F;
+		defineConstant("out_final", asString(L) + "_final.txt");
+	} else {
+		sim.readFromPopulationFile(model);
+		sim.tag = T;
+	}
 	
-	//use sim.tag to store the boolean of whether the threshold has been turned on or not
-	sim.tag = F;
-	
-	//use
-	y = matrix(rep(0,200), nrow=2);
 
 }
 
 
 1:late() {
+	//
+	if (status == 1) {
+		// sum the additive effects of QTLs
+		inds = sim.subpopulations.individuals;
+	
+   	genLi = asFloat(inds.countOfMutationsOfType(m1) + sum(sim.substitutions.mutationType == m1));
+   	V_A = var(genLi);
+   	inds.tagF = genLi;
+	
+			
+		//if the thresold has not been turned on 
+		if (!sim.tag) {
+		
+			//if it has reached 95% of equilibirum genetic liability, turn on the threshold
+			if (V_A >= (equilibrium * 0.95)) {
+		
+				print(paste("reached equilibrium at generation " + asString(sim.generation)));
+		
+				//calculate the threshold value
+				t = 2 * (max(inds.tagF) - mean(inds.tagF));
+				defineConstant("thres", t);
+				defineConstant("thresOnGen" , sim.generation);
+				sim.tag = T;
+				print(paste("threshold set to " + thres));
+			
+				//output the population state
+				defineConstant("model", ("model_output_" + asString(L) + ".txt"));
+				sim.outputFull(model);
+			
+				defineConstant("out", asString(L) + "_info.txt");
+			}
+	
+		//if not, then the threshold is turned on
+		} else {
+		
+			//CALCULATE SEG SITES
+			seg_sites = size(unique(sim.subpopulations.genomes.mutations));
+		
+			//OUTPUT GENETIC VARIANCE, MEAN LIAB, NUM SEG SITES
+			writeFile(out, paste(V_A + " " + mean(inds.tagF)+ " " + seg_sites + " " + thres), append=T);
 
-	// sum the additive effects of QTLs
-	inds = sim.subpopulations.individuals;
-	
-   genLi = asFloat(inds.countOfMutationsOfType(m1) + sum(sim.substitutions.mutationType == m1));
-   V_A = var(genLi);
-   inds.tagF = genLi;
-	
-			
-	//if the thresold has not been turned on 
-	if (!sim.tag) {
-		
-		//if it has reached 95% of equilibirum genetic liability, turn on the threshold
-		if (V_A >= (equilibrium * 0.95)) {
-		
-			print(paste("reached equilibrium at generation " + asString(sim.generation)));
-	
-			//calculate the threshold value
-			t = 2 * (max(inds.tagF) - mean(inds.tagF));
-			defineConstant("thres", t);
-			defineConstant("thresOnGen" , sim.generation);
-			sim.tag = T;
-			print(paste("threshold set to " + thres));
-			
-			defineConstant("out", asString(10000) + "_" + asString(t) + "_ms.txt");
 		}
-	
-	//if not, then the threshold is turned on
-	} else {
-	
-		//write the genetic variance to a file every generation.
-		writeFile("genetic_variance.txt", paste(V_A), append=T);
-		
-		//CALCULATE SEG SITES
-		seg_sites = size(unique(sim.subpopulations.genomes.mutations));
-		
-		//OUTPUT GENETIC VARIANCE, MEAN LIAB, NUM SEG SITES
-		writeFile("simulation.txt", paste(V_A + " " + mean(inds.tagF)+ " " + seg_sites), append=T);
-		
-		//Every 5000 generations read the file
-		if ((sim.generation % 5000) == 0) {
-			variation = readFile("genetic_variance.txt");
-			
-			//if reading is unsuccesful raise error
-			read_success = deleteFile("genetic_variance.txt");
-				if (!read_success) {
-					print("Oops error deleting file");}
-					
-			variation = asFloat(variation);		
-			time = seq(1,size(variation));
-			
-			slope = cov(variation, time) / var(time);
-			print(slope);
-			writeFile("slope.txt", paste(slope), append=T);
-		
-		}
-			
-		
-		
-		//TODO: figure out when the genetic variance reaches equilibrium again and output the 	population state + the genetic variance
-		//if ( ) {
-			//p1.outputMSSample(2 * init_pop, replace=F, out); 
-		//}
-	
 	}
+	else {
+		// sum the additive effects of QTLs
+		inds = sim.subpopulations.individuals;
 	
-					
-		//writeFile(out, test_line, append=T);	
+   	genLi = asFloat(inds.countOfMutationsOfType(m1) + sum(sim.substitutions.mutationType == m1));
+   	envLi = rnorm(size(inds), 0.0, sqrt(envVar));
+   	V_A = var(genLi);
+   	V_E = var(envLi);
+   	inds.tagF = genLi + envLi;
+   	
+   	seg_sites = size(unique(sim.subpopulations.genomes.mutations));
+   	writeFile(out_final, paste(V_A + " " + V_E + " " + mean(inds.tagF)+ " " + seg_sites), append=T);
+
+		
+	}
 } 
 
 fitness(NULL){
 	
-	//if the threshold has been turned on, add the fitness cost of disease if an individual is past 	the threshold
+	//if the threshold has been turned on, add the fitness cost of disease if an individual is past the threshold
 	if (sim.tag) {
 	
 		return 1.0 - selec * asFloat(individual.tagF>thres);
